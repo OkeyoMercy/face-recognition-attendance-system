@@ -1,0 +1,32 @@
+{% extends 'attendance_app/base.html' %}
+{% block title %}Login - Attendance System{% endblock %}
+
+{% block navbar %}{% endblock %}
+
+{% block login_content %}
+<div class="glass-card">
+    <div class="card-header">
+        <span>👤 Face Recognition Attendance System</span>
+        <span class="header-icons">_ □ ×</span>
+    </div>
+    <div class="card-body text-center">
+        <form method="POST" action="{% url 'login' %}">
+            {% csrf_token %}
+            <div class="form-group mt-15">
+                <input type="text" name="username" placeholder="Username" required style="width: 100%;">
+            </div>
+            <div class="form-group mt-15">
+                <input type="password" name="password" placeholder="Password" required style="width: 100%;">
+            </div>
+            <br>
+            <button type="submit" class="btn-primary w-full mt-15" style="padding: 12px; font-size: 16px;">Login</button>
+        </form>
+        <div class="mt-15">
+            <a href="{% url 'forgot_password' %}" class="link">Forgot Password?</a>
+        </div>
+        {% if form.errors %}
+            <p style="color: red; font-size: 13px;">Invalid username or password.</p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

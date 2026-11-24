@@ -1,0 +1,163 @@
+/* Base Aesthetics for Face Recognition Attendance System */
+body {
+    background-color: #f0f4f8; /* Very light grey/blue background for contrast */
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin: 0;
+    padding: 20px;
+    color: #333;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 30px;
+    justify-content: center;
+    align-items: flex-start;
+}
+
+/* Glass Card Container */
+.glass-card {
+    background: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.25), 0 5px 10px rgba(0,0,0,0.1);
+    width: 400px; /* Default width, can be overridden */
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Glossy Blue Header */
+.card-header {
+    background: linear-gradient(to bottom, #2b7bc4 0%, #155a96 40%, #0d4475 100%);
+    color: white;
+    padding: 12px 20px;
+    font-size: 16px;
+    font-weight: 600;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.5);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid #407cdc;
+}
+
+/* Header Icons (mimicking window controls or standard icons) */
+.header-icons {
+    letter-spacing: 2px;
+    font-size: 18px;
+    opacity: 0.8;
+}
+
+.card-body {
+    padding: 25px;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+/* Form Groups */
+.form-group {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+.form-group label {
+    width: 100px;
+    font-size: 14px;
+    font-weight: 500;
+    color: #5e54ec;
+    text-align: right;
+}
+
+/* Inputs */
+input[type="text"], input[type="email"], input[type="password"], select {
+    flex-grow: 1;
+    padding: 8px 12px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 14px;
+    box-shadow: inset 0 2px 4px rgba(0,0,0,0.05);
+    background: #fdfdfd;
+    outline: none;
+    transition: border-color 0.2s;
+}
+input[type="text"]:focus, input[type="email"]:focus, input[type="password"]:focus, select:focus {
+    border-color: #2b7bc4;
+}
+
+/* Glossy Buttons */
+.btn-primary {
+    background: linear-gradient(to bottom, #2270b8 0%, #3c92e2 100%);
+    color: white;
+    border: 1px solid #4799e5;
+    padding: 10px 20px;
+    border-radius: 5px;
+    font-size: 14px;
+    font-weight: bold;
+    cursor: pointer;
+    text-shadow: 0 1px 1px rgba(0,0,0,0.4);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.2), 0 2px 4px rgba(0,0,0,0.2);
+    transition: all 0.2s;
+    align-self: center; /* Center horizontally if in a flex col */
+    min-width: 120px;
+}
+.btn-primary:hover {
+    background: linear-gradient(to bottom, #2a81cf 0%, #3585cf 100%);
+}
+.btn-primary:active {
+    background: #458ecd;
+    box-shadow: inset 0 2px 5px rgba(0,0,0,0.4);
+}
+
+/* Table Aesthetics */
+.glass-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+    margin-top: 10px;
+}
+.glass-table th {
+    background: #115391;
+    color: white;
+    padding: 10px;
+    text-align: left;
+    border-right: 1px solid #59a1ea;
+}
+.glass-table td {
+    padding: 10px;
+    border-bottom: 1px solid #eee;
+    border-right: 1px solid #eee;
+}
+.glass-table tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+.status-present {
+    color: #2e8b57;
+    font-weight: bold;
+}
+
+/* Utilities */
+.text-center { text-align: center; }
+.mt-15 { margin-top: 15px; }
+.w-full { width: 100%; }
+a.link {
+    color: #115391;
+    text-decoration: none;
+    font-size: 13px;
+}
+a.link:hover { text-decoration: underline; }
+
+/* Dashboard Top Navigation */
+.dashboard-nav {
+    width: 100%;
+    margin-bottom: 20px;
+    display: flex;
+    justify-content: space-between;
+    background: #fff;
+    padding: 15px 30px;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+.nav-links a {
+    margin-left: 20px;
+    color: #115391;
+    font-weight: bold;
+    text-decoration: none;
+}

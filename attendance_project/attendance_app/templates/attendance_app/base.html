@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Face Recognition Attendance System{% endblock %}</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f5f5f5;
+        }
+
+        .admin-container {
+            display: flex;
+            height: 100vh;
+        }
+
+        .sidebar {
+            width: 228px;
+            background: linear-gradient(180deg, #1e3a8a 0%, #1e40af 100%);
+            color: white;
+            padding: 20px;
+            overflow-y: auto;
+            box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+        }
+
+        .sidebar-header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid rgba(255,255,255,0.2);
+        }
+
+        .sidebar-header h2 {
+            font-size: 16px;
+            font-weight: 600;
+            color: #3b82f6;
+        }
+
+        .sidebar-header p {
+            font-size: 12px;
+            color: #93c5fd;
+            margin-top: 3px;
+        }
+
+        .sidebar-nav {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .sidebar-nav a {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 15px;
+            color: white;
+            text-decoration: none;
+            border-radius: 6px;
+            transition: all 0.3s ease;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .sidebar-nav a:hover {
+            background: rgba(255,255,255,0.1);
+            padding-left: 20px;
+        }
+
+        .sidebar-nav a.active {
+            background: #ef4444;
+            color: white;
+        }
+
+        .sidebar-footer {
+            margin-top: auto;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255,255,255,0.2);
+            text-align: center;
+            font-size: 12px;
+            color: #93c5fd;
+        }
+
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+        }
+
+        .topbar {
+            background: white;
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .topbar-left {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .menu-toggle {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+        }
+
+        .topbar-right {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .admin-profile {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 15px;
+            background: #f3f4f6;
+            border-radius: 6px;
+        }
+
+        .admin-profile span {
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .admin-profile small {
+            font-size: 12px;
+            color: #6b7280;
+            display: block;
+        }
+
+        .content-wrapper {
+            flex: 1;
+            padding: 30px;
+            overflow-y: auto;
+        }
+
+        @media (max-width: 768px) {
+            .admin-container {
+                flex-direction: column;
+            }
+
+            .sidebar {
+                width: 100%;
+                height: auto;
+                display: none;
+            }
+
+            .sidebar.active {
+                display: block;
+            }
+
+            .menu-toggle {
+                display: block;
+            }
+        }
+    </style>
+</head>
+<body>
+    {% if user.is_authenticated %}
+    <div class="admin-container">
+        <!-- Sidebar Navigation -->
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <h2>👤 Face Recognition</h2>
+                <p>Attendance System</p>
+            </div>
+
+            <nav class="sidebar-nav">
+                <a href="{% url 'dashboard' %}" class="{% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}">
+                    🏠 Dashboard
+                </a>
+                <a href="{% url 'scanner' %}" class="{% if request.resolver_match.url_name == 'scanner' %}active{% endif %}">
+                    📷 Mark Attendance
+                </a>
+                <a href="{% url 'register_student' %}" class="{% if request.resolver_match.url_name == 'register_student' %}active{% endif %}">
+                    👥 Student / Users
+                </a>
+                <a href="{% url 'tracking' %}" class="{% if request.resolver_match.url_name == 'tracking' %}active{% endif %}">
+                    📊 Attendance Records
+                </a>
+                <a href="{% url 'dashboard' %}">
+                    📈 Reports
+                </a>
+                <a href="{% url 'dashboard' %}">
+                    ⚙️ Settings
+                </a>
+                <a href="{% url 'admin_redirect' %}">
+                    👨‍💼 System Users
+                </a>
+              <form method="POST" action="{% url 'logout' %}" style="margin-top: 20px;">
+    {% csrf_token %}
+    <button type="submit" style="background: none; border: none; color: #fecaca; cursor: pointer; font-size: 14px; padding: 12px 15px; width: 100%; text-align: left;">
+        🚪 Logout
+    </button>
+</form>
+            </nav>
+
+            <div class="sidebar-footer">
+                <p>Secure. Accurate. Reliable.</p>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Top Bar -->
+            <div class="topbar">
+                <div class="topbar-left">
+                    <button class="menu-toggle">☰</button>
+                    <h1 style="font-size: 20px; color: #1f2937; font-weight: 600;">Face Recognition Attendance System</h1>
+                </div>
+                <div class="topbar-right">
+                    <span style="font-size: 14px; color: #6b7280;">🔔</span>
+                    <div class="admin-profile">
+                        <span>👤</span>
+                        <div>
+                            <span>{{ user.username }}</span>
+                            <small>Administrator</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Content Area -->
+            <div class="content-wrapper">
+                {% block content %}
+                {% endblock %}
+            </div>
+        </div>
+    </div>
+    {% else %}
+        <div style="display: flex; align-items: center; justify-content: center; height: 100vh; background: #f5f5f5;">
+            {% block login_content %}
+            {% endblock %}
+        </div>
+    {% endif %}
+    <script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const menuToggle = document.querySelector('.menu-toggle');
+        const sidebar = document.querySelector('.sidebar');
+
+        if (menuToggle && sidebar) {
+            menuToggle.addEventListener('click', function () {
+                sidebar.classList.toggle('active');
+            });
+        }
+    });
+</script>
+</body>
+</html>

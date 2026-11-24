@@ -1,0 +1,38 @@
+# Python
+__pycache__/
+*.py[cod]
+*.log
+
+# Virtual environments
+venv/
+**/venv/
+
+# Databases and student information
+*.sqlite3
+db.sqlite3
+student_photos/
+**/student_photos/
+media/
+
+# Secrets
+.env
+.env.*
+
+# Editor settings
+.vscode/
+
+# Temporary files
+tmp_out.html
+
+# Local documents and installers
+*.pdf
+*.docx
+*.exe
+pip_install_log.txt
+extract_docx_text.py
+Year 4 Project Guide.docx
+attendance_project/dashboard picture.png
+attendance_project/dashoard now.png
+attendance_project/process_portraits.py
+attendance_project/gen60.py
+attendance_project/mock_data.py

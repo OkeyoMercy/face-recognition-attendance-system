@@ -1,0 +1,95 @@
+{% extends "admin/base_site.html" %}
+{% load i18n admin_urls static log %}
+
+{% block title %}{{ block.super }} | Home{% endblock %}
+{% block bodyclass %}{{ block.super }} dashboard-page{% endblock %}
+{% block nav-breadcrumbs %}{% endblock %}
+{% block nav-sidebar %}{% endblock %}
+
+{% block content %}
+<div class="dashboard-shell">
+  <aside class="app-sidebar">
+    <div class="sidebar-heading">
+      <p class="sidebar-label">Site administration</p>
+      <h2 class="sidebar-title">Quick access</h2>
+    </div>
+
+    <nav class="sidebar-menu">
+      <a href="{% url 'admin:index' %}" class="sidebar-link active">
+        <span class="sidebar-icon">🏠</span>
+        <span>Dashboard</span>
+      </a>
+      {% for app in app_list %}
+        {% for model in app.models %}
+          <a href="{{ model.admin_url }}" class="sidebar-link">
+            <span class="sidebar-icon">📄</span>
+            <span>{{ model.name }}</span>
+          </a>
+        {% endfor %}
+      {% endfor %}
+    </nav>
+  </aside>
+
+  <section class="dashboard-main">
+    <div class="dashboard-hero">
+      <div>
+        <p class="eyebrow">{% trans 'Admin dashboard' %}</p>
+        <h1>{% trans 'Manage attendance, students and users' %}</h1>
+        <p class="hero-copy">Use the panels below to open app sections and perform administration tasks across the attendance system.</p>
+      </div>
+    </div>
+
+    <div class="cards-grid">
+      {% for app in app_list %}
+      <div class="app-card">
+        <div class="app-card-header">
+          <span class="app-card-badge {% if 'auth' in app.name|lower %}badge-danger{% else %}badge-primary{% endif %}">{{ app.name|upper }}</span>
+        </div>
+        <div class="app-card-body">
+          {% for model in app.models %}
+          <div class="model-row">
+            <div>
+              <h3>{{ model.name }}</h3>
+              <p>{{ model.description }}</p>
+            </div>
+            <div class="model-actions">
+              {% if model.add_url %}<a href="{{ model.add_url }}" class="button ghost">+ Add</a>{% endif %}
+              {% if model.admin_url %}<a href="{{ model.admin_url }}" class="button secondary">Change</a>{% endif %}
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </section>
+
+  <aside class="dashboard-panel">
+    <div class="panel-card">
+      <div class="panel-header">
+        <h2>{% trans 'Recent actions' %}</h2>
+      </div>
+      <div class="panel-content">
+        {% get_admin_log 10 as admin_log %}
+        {% if admin_log %}
+          <ul class="recent-actions-list">
+            {% for entry in admin_log %}
+            <li>
+              <span class="action-time">{{ entry.action_time|date:"M d, H:i" }}</span>
+              <strong>{{ entry.user.username }}</strong>
+              <p>{{ entry.get_action_flag_display }}{% if entry.change_message %} · {{ entry.get_change_message }}{% endif %}</p>
+            </li>
+            {% endfor %}
+          </ul>
+        {% else %}
+          <div class="empty-state">
+            <div class="empty-icon">🗂️</div>
+            <p>{% trans 'No recent actions' %}</p>
+            <p>{% trans 'Actions you perform on the site will appear here.' %}</p>
+          </div>
+        {% endif %}
+      </div>
+    </div>
+  </aside>
+</div>
+{% endblock %}

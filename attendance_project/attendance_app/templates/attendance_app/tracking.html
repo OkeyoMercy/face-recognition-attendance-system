@@ -1,0 +1,67 @@
+{% extends 'attendance_app/base.html' %}
+{% block title %}Attendance Tracking{% endblock %}
+
+{% block content %}
+<div class="glass-card" style="width: 800px;">
+    <div class="card-header" style="display: flex; justify-content: space-between; align-items: center;">
+        <span>👤 Attendance Tracking</span>
+        <div>
+            <a href="{% url 'export_csv' %}?date_from={{ request.GET.date_from }}&date_to={{ request.GET.date_to }}&course={{ request.GET.course }}" class="btn-primary" style="background: #22c55e; padding: 5px 15px; font-size: 12px; text-decoration: none; border-radius: 4px;">📥 Export CSV</a>
+            <span class="header-icons" style="margin-left: 10px;">_ □ ×</span>
+        </div>
+    </div>
+    <div class="card-body">
+
+        <!-- Filter Bar -->
+        <div style="display: flex; gap: 10px; background: #eef2f5; padding: 10px; border-radius: 4px; align-items: center; justify-content: space-between;">
+            <div style="font-weight: bold; font-size: 14px; color: #333;">Filter:</div>
+            <form method="GET" action="{% url 'tracking' %}" style="display: flex; gap: 10px; flex-grow: 1; align-items: center;">
+                <input type="date" name="date_from" value="{{ request.GET.date_from }}" style="width: 130px;">
+                <input type="date" name="date_to" value="{{ request.GET.date_to }}" style="width: 130px;">
+                <select name="course" style="flex-grow: 1; padding: 8px; border-radius: 4px; border: 1px solid #ccc;">
+                    <option value="">All Courses/Units</option>
+                    {% for unit in units %}
+                    <option value="{{ unit.id }}" {% if request.GET.course == unit.id|stringformat:"i" %}selected{% endif %}>
+                        {{ unit.code }}: {{ unit.name }}
+                    </option>
+                    {% endfor %}
+                </select>
+                <button type="submit" class="btn-primary" style="min-width: 80px; padding: 8px;">Refresh</button>
+            </form>
+        </div>
+
+        <!-- Data Table -->
+        <div style="overflow-y: auto; max-height: 400px; border: 1px solid #ddd; border-top: none;">
+            <table class="glass-table" style="margin-top: 0;">
+                <thead style="position: sticky; top: 0;">
+                    <tr>
+                        <th>Student ID</th>
+                        <th>Name</th>
+                        <th>Course/Unit</th>
+                        <th>Date</th>
+                        <th>Time</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for record in records %}
+                    <tr>
+                        <td>{{ record.student.reg_number }}</td>
+                        <td>{{ record.student.name }}</td>
+                        <td>{{ record.unit.code }}</td>
+                        <td>{{ record.date|date:"m/d/Y" }}</td>
+                        <td>{{ record.time|time:"h:i A" }}</td>
+                        <td class="status-present">✔️ {{ record.status }}</td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="6" class="text-center">No attendance records found.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+    </div>
+</div>
+{% endblock %}

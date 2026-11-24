@@ -1,0 +1,46 @@
+{% extends "admin/base.html" %}
+{% load static i18n %}
+
+{% block title %}{{ block.super }} | Face Recognition Attendance System{% endblock %}
+
+{% block extrastyle %}
+  {{ block.super }}
+  <link rel="stylesheet" href="{% static 'admin/css/custom_admin.css' %}">
+{% endblock %}
+
+{% block header %}
+<header id="header">
+  <div class="topbar">
+    <div class="brand-bar">
+      <div class="brand-logo">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#0047AB" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+          <line x1="16" y1="2" x2="16" y2="6"></line>
+          <line x1="8" y1="2" x2="8" y2="6"></line>
+          <line x1="3" y1="10" x2="21" y2="10"></line>
+          <path d="M9 16l2 2 4-4"></path>
+        </svg>
+      </div>
+      {% block breadcrumbs %}
+      <div class="breadcrumbs">
+        <a href="{% url 'admin:index' %}">Home</a>
+        {% if cl %}
+          &rsaquo; <a href="{% url 'admin:app_list' app_label=cl.opts.app_label %}">{{ cl.opts.app_config.verbose_name }}</a>
+          &rsaquo; {{ cl.opts.verbose_name_plural|capfirst }}
+        {% endif %}
+      </div>
+      {% endblock %}
+    </div>
+
+    <div class="header-actions">
+        {% if user.is_authenticated %}
+            {% if cl %}
+                <a href="add/" class="addlink">Add {{ cl.opts.verbose_name }}</a>
+            {% endif %}
+        {% endif %}
+    </div>
+  </div>
+</header>
+{% endblock %}
+
+{% block nav-global %}{% endblock %}

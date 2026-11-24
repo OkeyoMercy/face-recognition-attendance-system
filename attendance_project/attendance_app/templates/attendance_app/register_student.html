@@ -1,0 +1,46 @@
+{% extends 'attendance_app/base.html' %}
+{% block title %}Student Registration{% endblock %}
+
+{% block content %}
+<div class="glass-card" style="width: 500px;">
+    <div class="card-header">
+        <span>📋 Student Registration</span>
+        <span class="header-icons">_ □ ×</span>
+    </div>
+    <div class="card-body">
+        <form method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="form-group">
+                <label>Student ID:</label>
+                <input type="text" name="reg_number" required>
+            </div>
+            <div class="form-group">
+                <label>Full Name:</label>
+                <input type="text" name="name" required>
+            </div>
+            <div class="form-group">
+                <label>Course:</label>
+                <input type="text" name="course" required>
+            </div>
+            <div class="form-group">
+                <label>Upload Photo:</label>
+                <div style="display: flex; gap: 10px; flex-grow: 1;">
+                    <input type="file" name="photo" accept="image/*" required style="flex-grow: 1;">
+                </div>
+            </div>
+            <br>
+            <div class="text-center" style="margin-top: 15px;">
+                <button type="submit" class="btn-primary">Register</button>
+            </div>
+            <div class="text-center" style="margin-top: 20px;">
+                <a href="{% url 'login' %}" style="color: #115391; font-size: 14px; text-decoration: none;">← Back to Login</a>
+            </div>
+        </form>
+        {% if messages %}
+            {% for message in messages %}
+                <p style="text-align: center; color: green; font-weight: bold;">{{ message }}</p>
+            {% endfor %}
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

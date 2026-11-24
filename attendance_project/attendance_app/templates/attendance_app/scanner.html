@@ -1,0 +1,123 @@
+{% extends 'attendance_app/base.html' %}
+{% block title %}Face Recognition Scan{% endblock %}
+
+{% block content %}
+<div style="display: flex; gap: 20px; justify-content: center; align-items: flex-start; flex-wrap: wrap; padding: 20px;">
+
+    <!-- Left: Scanner -->
+    <div class="glass-card" style="width: 550px; margin: 0;">
+        <div class="card-header">
+            <span>📷 System Face Scanner</span>
+            <span class="header-icons">_ □ ×</span>
+        </div>
+        <div class="card-body" style="background: #000; padding: 0; position: relative; border-radius: 0;">
+            <video id="webcam" width="100%" height="auto" autoplay playsinline style="display: block;"></video>
+
+            <div style="position: absolute; top: 10%; left: 20%; width: 60%; height: 70%; border: 2px solid rgba(0,255,0,0.5); pointer-events: none;">
+                <div style="position: absolute; top: -2px; left: -2px; width: 20px; height: 20px; border-top: 4px solid #00ff00; border-left: 4px solid #00ff00;"></div>
+                <div style="position: absolute; top: -2px; right: -2px; width: 20px; height: 20px; border-top: 4px solid #00ff00; border-right: 4px solid #00ff00;"></div>
+                <div style="position: absolute; bottom: -2px; left: -2px; width: 20px; height: 20px; border-bottom: 4px solid #00ff00; border-left: 4px solid #00ff00;"></div>
+                <div style="position: absolute; bottom: -2px; right: -2px; width: 20px; height: 20px; border-bottom: 4px solid #00ff00; border-right: 4px solid #00ff00;"></div>
+            </div>
+
+            <div id="scan-status" style="position: absolute; bottom: 15px; width: 100%; text-align: center; color: white; font-weight: bold; text-shadow: 0 2px 4px black;">
+                IDLE
+            </div>
+        </div>
+        <div class="card-body" style="padding: 15px; background: #0a1f33;">
+            <select id="venue-select" style="width: 100%; padding: 10px; margin-bottom: 10px; border-radius: 5px;">
+                <option value="">Select Unit/Course...</option>
+                {% for unit in units %}
+                <option value="{{ unit.id }}">{{ unit.code }}: {{ unit.name }}</option>
+                {% endfor %}
+            </select>
+            <button id="engine-btn" class="btn-primary" style="width: 100%; padding: 12px;">Start Scanner Engine</button>
+        </div>
+    </div>
+
+    <!-- Right: Recent Scans Log -->
+    <div class="glass-card" style="width: 350px; margin: 0; min-height: 450px;">
+        <div class="card-header">📋 Recent Activity Log</div>
+        <div class="card-body" style="background: white; color: #333; height: 400px; overflow-y: auto; padding: 10px;" id="activity-log">
+            <p style="color: #999; text-align: center; margin-top: 20px;">No activity yet. Start the engine to begin.</p>
+        </div>
+    </div>
+</div>
+
+<script>
+    const video = document.getElementById('webcam');
+    const statusDiv = document.getElementById('scan-status');
+    const engineBtn = document.getElementById('engine-btn');
+    const venueSelect = document.getElementById('venue-select');
+    const activityLog = document.getElementById('activity-log');
+    let scanInterval;
+navigator.mediaDevices.getUserMedia({ video: true })
+    .then(stream => {
+        video.srcObject = stream;
+    })
+    .catch(error => {
+        statusDiv.textContent = 'Camera access failed. Please allow camera permissions.';
+        statusDiv.style.color = '#ff4444';
+        console.error('Camera error:', error);
+    });
+
+    function addLog(message) {
+        const time = new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit', second:'2-digit'});
+        const entry = document.createElement('div');
+        entry.style.padding = '8px';
+        entry.style.borderBottom = '1px solid #eee';
+        entry.style.fontSize = '13px';
+        const timeLabel = document.createElement('strong');
+timeLabel.textContent = `[${time}] `;
+entry.appendChild(timeLabel);
+entry.appendChild(document.createTextNode(message));
+        if(activityLog.querySelector('p')) activityLog.innerHTML = '';
+        activityLog.prepend(entry);
+    }
+
+    engineBtn.addEventListener('click', () => {
+        if(!venueSelect.value) return alert('Select a venue!');
+
+        if(engineBtn.innerText.includes('Start')) {
+            engineBtn.innerText = 'Stop Engine';
+            engineBtn.style.background = '#ff4444';
+            statusDiv.innerText = 'ENGINE ACTIVE';
+
+            const canvas = document.createElement('canvas');
+            const context = canvas.getContext('2d');
+
+            scanInterval = setInterval(() => {
+                canvas.width = video.videoWidth;
+                canvas.height = video.videoHeight;
+                context.drawImage(video, 0, 0);
+
+                fetch('{% url "process_scan" %}', {
+                    method: 'POST',
+                    headers: {
+    'Content-Type': 'application/json',
+    'X-CSRFToken': '{{ csrf_token }}'
+},
+                    body: JSON.stringify({ image: canvas.toDataURL('image/jpeg', 0.9), course: venueSelect.value })
+                })
+                .then(r => r.json())
+                .then(data => {
+                    if(data.status === 'success') {
+                       statusDiv.textContent = data.message;
+statusDiv.style.color = '#00ff00';
+                        addLog(data.message);
+                    } else {
+                       statusDiv.textContent = data.message;
+statusDiv.style.color = '#ff9900';
+                    }
+                });
+            }, 3000); // 3-second cycle for web stability
+        } else {
+            clearInterval(scanInterval);
+            engineBtn.innerText = 'Start Scanner Engine';
+            engineBtn.style.background = '';
+            statusDiv.innerText = 'IDLE';
+            addLog("Scanner engine stopped.");
+        }
+    });
+</script>
+{% endblock %}
