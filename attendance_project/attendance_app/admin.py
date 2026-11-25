@@ -1,11 +1,13 @@
 from django.contrib import admin
 from .models import Student, AttendanceRecord, Unit, Timetable
 import base64
-import cv2
-import face_recognition
-import numpy as np
 from django.utils.html import format_html
 from django import forms
+
+try:
+    import face_recognition
+except ImportError:
+    face_recognition = None
 
 class StudentAdminForm(forms.ModelForm):
     photo_upload = forms.ImageField(required=False, label="Upload Student Portrait")
@@ -33,6 +35,13 @@ class StudentAdmin(admin.ModelAdmin):
     def save_model(self, request, obj, form, change):
         photo = form.cleaned_data.get('photo_upload')
         if photo:
+            if face_recognition is None:
+                self.message_user(
+                    request,
+                    "Photo registration is disabled in this online demo.",
+                    level='WARNING'
+                )
+                return super().save_model(request, obj, form, change)
             # 1. Store raw photo bytes
             photo_bytes = photo.read()
             obj.photo = photo_bytes
