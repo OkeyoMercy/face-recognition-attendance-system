@@ -7,11 +7,18 @@ from django.views.decorators.http import require_POST
 from django.contrib import messages
 import datetime
 from .models import Student, AttendanceRecord, Timetable, Unit
-import face_recognition
-import numpy as np
+try:
+    import face_recognition
+    import numpy as np
+    import cv2
+    FACE_RECOGNITION_AVAILABLE = True
+except ImportError:
+    face_recognition = None
+    np = None
+    cv2 = None
+    FACE_RECOGNITION_AVAILABLE = False
 import base64
 import json
-import cv2
 import csv
 
 # Module-level encoding cache
@@ -79,6 +86,11 @@ def dashboard(request):
 
 @login_required(login_url='login')
 def process_scan(request):
+    if not FACE_RECOGNITION_AVAILABLE:
+        return JsonResponse({
+            "status": "error",
+            "message": "Face recognition is disabled in this online demo. Please use the local version for scanning."
+        })
     if request.method == 'POST':
         try:
             data = json.loads(request.body)
@@ -197,6 +209,9 @@ def forgot_password(request):
 @login_required(login_url='login')
 def register_student(request):
     if request.method == 'POST':
+        if not FACE_RECOGNITION_AVAILABLE:
+            messages.error(request, "Photo registration is disabled in this online demo. Please use the local version for face recognition.")
+            return render(request, 'attendance_app/register_student.html')
         name = request.POST.get('name')
         reg_number = request.POST.get('reg_number')
         course = request.POST.get('course')
