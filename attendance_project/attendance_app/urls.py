@@ -2,7 +2,9 @@ from django.urls import path
 from . import views
 
 urlpatterns = [
-    path('', views.login_view, name='login'), # Set login as the default page
+    path('', views.welcome, name='welcome'),
+    path('login/', views.login_view, name='login'),
+    path('demo/', views.demo, name='demo'),
     path('logout/', views.logout_view, name='logout'),
     path('admin-redirect/', views.admin_login_redirect, name='admin_redirect'),
     path('dashboard/', views.dashboard, name='dashboard'),

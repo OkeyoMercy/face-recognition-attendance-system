@@ -75,8 +75,16 @@ entry.appendChild(document.createTextNode(message));
         activityLog.prepend(entry);
     }
 
-    engineBtn.addEventListener('click', () => {
-        if(!venueSelect.value) return alert('Select a venue!');
+engineBtn.addEventListener('click', () => {
+    if (!venueSelect.value) {
+        return alert('Select a unit/course first!');
+    }
+
+    if (!video.videoWidth || !video.videoHeight || video.readyState < 2) {
+        statusDiv.textContent = 'Camera is not ready. Please wait.';
+        statusDiv.style.color = '#ff9900';
+        return;
+    }
 
         if(engineBtn.innerText.includes('Start')) {
             engineBtn.innerText = 'Stop Engine';

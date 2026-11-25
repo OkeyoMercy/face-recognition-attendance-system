@@ -1,0 +1,1047 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Demo Dashboard | Smart Attendance System</title>
+    <script src="https://cdn.jsdelivr.net/npm/face-api.js@0.22.2/dist/face-api.min.js"></script>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background: #f4f6fb;
+            color: #26344d;
+        }
+
+        .layout {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* SIDEBAR */
+        .sidebar {
+            width: 245px;
+            background: #142d55;
+            color: white;
+            padding: 25px 17px;
+            display: flex;
+            flex-direction: column;
+            flex-shrink: 0;
+        }
+
+        .brand {
+            padding: 5px 10px 28px;
+            border-bottom: 1px solid rgba(255,255,255,.15);
+        }
+
+        .brand h2 {
+            font-size: 19px;
+            letter-spacing: .3px;
+        }
+
+        .brand span {
+            color: #ef5350;
+        }
+
+        .brand p {
+            color: #aebed5;
+            font-size: 12px;
+            margin-top: 6px;
+        }
+
+        .nav-label {
+            color: #91a6c5;
+            font-size: 10px;
+            font-weight: bold;
+            letter-spacing: 1.5px;
+            margin: 28px 10px 12px;
+        }
+
+        .nav-links {
+            display: flex;
+            flex-direction: column;
+            gap: 7px;
+        }
+
+        .nav-links a {
+            color: #dce5f2;
+            text-decoration: none;
+            padding: 13px 12px;
+            border-radius: 7px;
+            font-size: 14px;
+            transition: .2s;
+        }
+
+        .nav-links a:hover,
+        .nav-links a.active {
+            background: #244675;
+            color: white;
+        }
+
+        .nav-links a.active {
+            border-left: 3px solid #ef5350;
+        }
+
+        .sidebar-bottom {
+            margin-top: auto;
+            padding: 20px 10px 5px;
+            border-top: 1px solid rgba(255,255,255,.15);
+        }
+
+        .sidebar-bottom p {
+            font-size: 12px;
+            color: #aebed5;
+            line-height: 1.7;
+        }
+
+        .sidebar-bottom a {
+            display: inline-block;
+            color: #ffb4b2;
+            text-decoration: none;
+            margin-top: 12px;
+            font-size: 13px;
+        }
+
+        /* MAIN CONTENT */
+        .main {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .topbar {
+            background: white;
+            min-height: 76px;
+            padding: 15px 32px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #e8edf4;
+        }
+
+        .topbar h1 {
+            font-size: 19px;
+            color: #142d55;
+        }
+
+        .topbar p {
+            color: #8995a8;
+            font-size: 12px;
+            margin-top: 4px;
+        }
+
+        .profile {
+            display: flex;
+            align-items: center;
+            gap: 11px;
+        }
+
+        .avatar {
+            width: 39px;
+            height: 39px;
+            border-radius: 50%;
+            background: #e8effa;
+            color: #244675;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+
+        .profile strong {
+            font-size: 13px;
+            display: block;
+        }
+
+        .profile small {
+            color: #8995a8;
+            font-size: 11px;
+        }
+
+        .menu-toggle {
+            display: none;
+            border: 0;
+            background: none;
+            font-size: 25px;
+            color: #142d55;
+            cursor: pointer;
+        }
+
+        .content {
+            padding: 30px 32px;
+            max-width: 1600px;
+            margin: auto;
+        }
+
+        .demo-notice {
+            background: #fff6e5;
+            border: 1px solid #f5dfad;
+            color: #795716;
+            border-radius: 8px;
+            padding: 13px 17px;
+            font-size: 13px;
+            margin-bottom: 25px;
+        }
+
+        .page-heading {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .page-heading h2 {
+            color: #142d55;
+            font-size: 25px;
+            margin-bottom: 6px;
+        }
+
+        .page-heading p {
+            color: #8995a8;
+            font-size: 13px;
+        }
+
+        .date-label {
+            background: white;
+            padding: 11px 16px;
+            border: 1px solid #e5eaf1;
+            border-radius: 7px;
+            color: #52627b;
+            font-size: 13px;
+        }
+
+        /* STATISTICS */
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 18px;
+            margin-bottom: 25px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 22px;
+            border-radius: 10px;
+            border: 1px solid #edf0f5;
+            box-shadow: 0 3px 12px rgba(20,45,85,.035);
+        }
+
+        .stat-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 17px;
+        }
+
+        .stat-title {
+            font-size: 13px;
+            color: #7d899c;
+            font-weight: 500;
+        }
+
+        .stat-icon {
+            width: 38px;
+            height: 38px;
+            border-radius: 9px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+        }
+
+        .blue { background: #e8efff; color: #315fbd; }
+        .green { background: #e6f7ee; color: #15945a; }
+        .red { background: #ffeded; color: #d94343; }
+        .orange { background: #fff2e2; color: #d88724; }
+
+        .stat-card h3 {
+            font-size: 29px;
+            color: #142d55;
+            margin-bottom: 7px;
+        }
+
+        .stat-card p {
+            color: #929daf;
+            font-size: 11px;
+        }
+
+        /* PANELS */
+        .panel-grid {
+            display: grid;
+            grid-template-columns: 1.6fr 1fr;
+            gap: 20px;
+            margin-bottom: 22px;
+        }
+
+        .panel {
+            background: white;
+            border: 1px solid #edf0f5;
+            border-radius: 10px;
+            padding: 23px;
+            box-shadow: 0 3px 12px rgba(20,45,85,.035);
+            min-width: 0;
+        }
+
+        .panel-heading {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 22px;
+        }
+
+        .panel-heading h3 {
+            color: #142d55;
+            font-size: 15px;
+        }
+
+        .panel-heading span {
+            font-size: 11px;
+            color: #8995a8;
+        }
+
+        .chart-container {
+            position: relative;
+            height: 260px;
+        }
+
+        .donut-container {
+            position: relative;
+            height: 220px;
+            max-width: 300px;
+            margin: auto;
+        }
+
+        /* TABLE */
+        .records-panel {
+            margin-bottom: 22px;
+        }
+
+        .table-wrapper {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 620px;
+        }
+
+        th {
+            background: #f7f9fc;
+            color: #8995a8;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: .5px;
+            text-align: left;
+            padding: 14px 12px;
+        }
+
+        td {
+            padding: 15px 12px;
+            border-bottom: 1px solid #edf0f5;
+            font-size: 13px;
+            color: #52627b;
+        }
+
+        td strong {
+            color: #26344d;
+            font-weight: 600;
+        }
+
+        .status {
+            padding: 6px 11px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        .present {
+            color: #16834a;
+            background: #e5f7ed;
+        }
+
+        .late {
+            color: #b87513;
+            background: #fff3dc;
+        }
+
+        .absent {
+            color: #cc4242;
+            background: #ffeded;
+        }
+
+        /* UNITS */
+        .unit-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+        }
+
+        .unit-card {
+            border: 1px solid #edf0f5;
+            border-radius: 8px;
+            padding: 17px;
+        }
+
+        .unit-card h4 {
+            color: #142d55;
+            font-size: 13px;
+            margin-bottom: 7px;
+        }
+
+        .unit-card p {
+            color: #8995a8;
+            font-size: 11px;
+            margin-bottom: 14px;
+        }
+
+        .progress {
+            height: 7px;
+            background: #edf1f6;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .progress div {
+            height: 100%;
+            background: #315fbd;
+            border-radius: 10px;
+        }
+
+        .unit-footer {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 9px;
+            font-size: 11px;
+            color: #8995a8;
+        }
+
+        footer {
+            text-align: center;
+            padding: 25px;
+            color: #9aa5b5;
+            font-size: 11px;
+        }
+
+        /* RESPONSIVE */
+        @media(max-width: 1050px) {
+            .stats {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .panel-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media(max-width: 700px) {
+            .layout {
+                display: block;
+            }
+
+            .sidebar {
+                display: none;
+                width: 100%;
+            }
+
+            .sidebar.open {
+                display: flex;
+            }
+
+            .topbar {
+                padding: 14px 18px;
+            }
+
+            .menu-toggle {
+                display: block;
+            }
+
+            .topbar-left {
+                display: flex;
+                align-items: center;
+                gap: 12px;
+            }
+
+            .topbar h1 {
+                font-size: 15px;
+            }
+
+            .profile-info {
+                display: none;
+            }
+
+            .content {
+                padding: 22px 16px;
+            }
+
+            .stats {
+                gap: 12px;
+            }
+
+            .stat-card {
+                padding: 16px;
+            }
+
+            .stat-card h3 {
+                font-size: 24px;
+            }
+
+            .unit-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .page-heading h2 {
+                font-size: 22px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="layout">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar" id="sidebar">
+        <div class="brand">
+            <h2>SMART<span>ATTENDANCE</span></h2>
+            <p>Face Recognition System</p>
+        </div>
+
+        <p class="nav-label">MAIN MENU</p>
+
+<nav class="nav-links">
+    <a href="#overview" class="active">▦ &nbsp; Overview</a>
+    <a href="#scanner">📷 &nbsp; Face Recognition</a>
+    <a href="#analytics">▥ &nbsp; Attendance Analytics</a>
+    <a href="#records">▤ &nbsp; Attendance Records</a>
+    <a href="#units">▣ &nbsp; Units & Sessions</a>
+</nav>
+
+        <p class="nav-label">NAVIGATION</p>
+
+        <nav class="nav-links">
+            <a href="/">⌂ &nbsp; Home Page</a>
+            <a href="{% url 'login' %}">⇥ &nbsp; Staff Login</a>
+        </nav>
+
+        <div class="sidebar-bottom">
+            <p>Secure. Accurate. Reliable.</p>
+            <a href="/">← Back to Home</a>
+        </div>
+    </aside>
+
+    <!-- MAIN AREA -->
+    <div class="main">
+
+        <header class="topbar">
+            <div class="topbar-left">
+                <button class="menu-toggle" id="menuToggle">☰</button>
+                <div>
+                    <h1>Attendance Management</h1>
+                    <p>Institutional Attendance Overview</p>
+                </div>
+            </div>
+
+            <div class="profile">
+                <div class="avatar">D</div>
+                <div class="profile-info">
+                    <strong>Demo User</strong>
+                    <small>Public Preview</small>
+                </div>
+            </div>
+        </header>
+
+        <main class="content">
+
+            <div class="demo-notice">
+                <strong>Demo Environment:</strong>
+                You are viewing sample information. All names, registration numbers,
+                statistics and attendance records on this page are fictional.
+            </div>
+
+            <!-- OVERVIEW -->
+            <section id="overview">
+                <div class="page-heading">
+                    <div>
+                        <h2>Dashboard Overview</h2>
+                        <p>Monitor attendance activity and institutional statistics.</p>
+                    </div>
+                    <div class="date-label">📅 Sample Daily Overview</div>
+                </div>
+
+                <div class="stats">
+
+                    <div class="stat-card">
+                        <div class="stat-top">
+                            <span class="stat-title">Total Students</span>
+                            <div class="stat-icon blue">♙</div>
+                        </div>
+                        <h3>250</h3>
+                        <p>Registered sample students</p>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-top">
+                            <span class="stat-title">Present Today</span>
+                            <div class="stat-icon green">✓</div>
+                        </div>
+                        <h3>218</h3>
+                        <p>87.2% attendance</p>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-top">
+                            <span class="stat-title">Absent Today</span>
+                            <div class="stat-icon red">✕</div>
+                        </div>
+                        <h3>32</h3>
+                        <p>12.8% of sample students</p>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-top">
+                            <span class="stat-title">Total Sessions</span>
+                            <div class="stat-icon orange">▤</div>
+                        </div>
+                        <h3>12</h3>
+                        <p>Sample lecture sessions</p>
+                    </div>
+
+                </div>
+            </section>
+
+            <!-- ANALYTICS -->
+
+<!-- FACE RECOGNITION DEMO -->
+<section id="scanner">
+    <div class="panel" style="margin-bottom:22px;">
+        <div class="panel-heading">
+            <h3>Face Recognition Scanner</h3>
+            <span>Interactive camera demonstration</span>
+        </div>
+
+        <p style="font-size:13px;color:#8995a8;margin-bottom:18px;">
+            Start your camera and experience the system's scanning interface.
+            This public demo uses simulated recognition.
+        </p>
+
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:25px;align-items:center;">
+
+            <div>
+                <div style="background:#142d55;border-radius:12px;padding:12px;position:relative;">
+                    <video id="demoVideo" autoplay playsinline
+                        style="width:100%;display:none;border-radius:8px;"></video>
+
+                    <div id="cameraPlaceholder"
+                        style="height:260px;display:flex;align-items:center;justify-content:center;flex-direction:column;color:white;">
+                        <div style="font-size:55px;">📷</div>
+                        <p style="margin-top:12px;font-size:13px;">Camera preview will appear here</p>
+                    </div>
+
+                    <div id="scanOverlay"
+                        style="display:none;position:absolute;inset:12px;border:2px solid #36d399;border-radius:8px;pointer-events:none;">
+                    </div>
+                </div>
+
+                <p id="cameraStatus" style="font-size:12px;color:#8995a8;margin-top:12px;">
+                    Camera is currently inactive.
+                </p>
+            </div>
+
+            <div>
+                <h3 style="color:#142d55;margin-bottom:12px;">Scanner Controls</h3>
+
+                <button id="startCamera"
+                    style="background:#244f91;color:white;border:0;padding:13px 20px;border-radius:7px;cursor:pointer;width:100%;margin-bottom:12px;font-weight:600;">
+                    Start Camera
+                </button>
+
+                <button id="scanFace" disabled
+                    style="background:#15945a;color:white;border:0;padding:13px 20px;border-radius:7px;cursor:pointer;width:100%;margin-bottom:12px;font-weight:600;opacity:.5;">
+                    Scan Face
+                </button>
+
+                <button id="stopCamera"
+                    style="background:#fff0f0;color:#d94343;border:1px solid #ffd5d5;padding:12px 20px;border-radius:7px;cursor:pointer;width:100%;">
+                    Stop Camera
+                </button>
+
+                <div id="recognitionResult"
+                    style="display:none;background:#e6f7ee;border:1px solid #b8e8cd;border-radius:8px;padding:17px;margin-top:20px;">
+                    <h4 style="color:#16834a;margin-bottom:10px;">✓ Demo Match Found</h4>
+                    <p style="font-size:13px;color:#26344d;line-height:1.8;">
+                        <strong>Student:</strong> Sample Student<br>
+                        <strong>Registration:</strong> DEMO/001/23<br>
+                        <strong>Unit:</strong> Data Structures<br>
+                        <strong>Status:</strong> Demo Recognition Only
+                    </p>
+                </div>
+
+                <p style="font-size:11px;color:#8995a8;margin-top:15px;line-height:1.6;">
+                    Privacy notice: Camera footage is processed locally in your browser.
+                    No images are uploaded or stored. Recognition results are simulated.
+                </p>
+            </div>
+        </div>
+    </div>
+</section>
+
+            <section id="analytics">
+                <div class="panel-grid">
+
+                    <div class="panel">
+                        <div class="panel-heading">
+                            <h3>Attendance Trends</h3>
+                            <span>Sample weekly data</span>
+                        </div>
+                        <div class="chart-container">
+                            <canvas id="trendChart"></canvas>
+                        </div>
+                    </div>
+
+                    <div class="panel">
+                        <div class="panel-heading">
+                            <h3>Today's Attendance</h3>
+                            <span>250 students</span>
+                        </div>
+                        <div class="donut-container">
+                            <canvas id="attendanceChart"></canvas>
+                        </div>
+                    </div>
+
+                </div>
+            </section>
+
+            <!-- RECORDS -->
+            <section id="records">
+                <div class="panel records-panel">
+                    <div class="panel-heading">
+                        <h3>Recent Attendance Records</h3>
+                        <span>Sample records</span>
+                    </div>
+
+                    <div class="table-wrapper">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Student</th>
+                                    <th>Registration Number</th>
+                                    <th>Unit</th>
+                                    <th>Time</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+
+                            <tbody>
+                                <tr>
+                                    <td><strong>Jane Wanjiku</strong></td>
+                                    <td>COM/001/23</td>
+                                    <td>Data Structures</td>
+                                    <td>08:05 AM</td>
+                                    <td><span class="status present">Present</span></td>
+                                </tr>
+
+                                <tr>
+                                    <td><strong>Brian Otieno</strong></td>
+                                    <td>COM/014/23</td>
+                                    <td>Database Systems</td>
+                                    <td>09:10 AM</td>
+                                    <td><span class="status late">Late</span></td>
+                                </tr>
+
+                                <tr>
+                                    <td><strong>Mary Akinyi</strong></td>
+                                    <td>COM/027/23</td>
+                                    <td>Computer Networks</td>
+                                    <td>10:02 AM</td>
+                                    <td><span class="status present">Present</span></td>
+                                </tr>
+
+                                <tr>
+                                    <td><strong>David Kiptoo</strong></td>
+                                    <td>COM/039/23</td>
+                                    <td>Operating Systems</td>
+                                    <td>11:15 AM</td>
+                                    <td><span class="status absent">Absent</span></td>
+                                </tr>
+
+                                <tr>
+                                    <td><strong>Grace Njeri</strong></td>
+                                    <td>COM/045/23</td>
+                                    <td>Data Structures</td>
+                                    <td>08:12 AM</td>
+                                    <td><span class="status present">Present</span></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- UNITS -->
+            <section id="units">
+                <div class="panel">
+                    <div class="panel-heading">
+                        <h3>Unit Attendance Summary</h3>
+                        <span>Sample session statistics</span>
+                    </div>
+
+                    <div class="unit-grid">
+
+                        <div class="unit-card">
+                            <h4>Data Structures</h4>
+                            <p>COM 210 · 60 students</p>
+                            <div class="progress"><div style="width:90%"></div></div>
+                            <div class="unit-footer">
+                                <span>54 Present</span>
+                                <strong>90%</strong>
+                            </div>
+                        </div>
+
+                        <div class="unit-card">
+                            <h4>Database Systems</h4>
+                            <p>COM 220 · 50 students</p>
+                            <div class="progress"><div style="width:84%"></div></div>
+                            <div class="unit-footer">
+                                <span>42 Present</span>
+                                <strong>84%</strong>
+                            </div>
+                        </div>
+
+                        <div class="unit-card">
+                            <h4>Computer Networks</h4>
+                            <p>COM 230 · 70 students</p>
+                            <div class="progress"><div style="width:88%"></div></div>
+                            <div class="unit-footer">
+                                <span>62 Present</span>
+                                <strong>88%</strong>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </section>
+
+        </main>
+
+        <footer>
+            Smart Attendance System · Public Demonstration · Sample Data Only
+        </footer>
+
+    </div>
+</div>
+
+<script>
+   
+// MOBILE SIDEBAR
+const menuToggle = document.getElementById('menuToggle');
+const sidebar = document.getElementById('sidebar');
+
+menuToggle.addEventListener('click', function () {
+    sidebar.classList.toggle('open');
+});
+
+// SIDEBAR NAVIGATION
+document.querySelectorAll('.nav-links a[href^="#"]').forEach(link => {
+    link.addEventListener('click', function () {
+        document.querySelectorAll('.nav-links a').forEach(item => {
+            item.classList.remove('active');
+        });
+
+        this.classList.add('active');
+        sidebar.classList.remove('open');
+    });
+});
+
+// CAMERA ELEMENTS
+const video = document.getElementById('demoVideo');
+const placeholder = document.getElementById('cameraPlaceholder');
+const cameraStatus = document.getElementById('cameraStatus');
+const startButton = document.getElementById('startCamera');
+const scanButton = document.getElementById('scanFace');
+const stopButton = document.getElementById('stopCamera');
+const result = document.getElementById('recognitionResult');
+const overlay = document.getElementById('scanOverlay');
+
+let cameraStream = null;
+
+// START CAMERA
+startButton.addEventListener('click', async function () {
+    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+        cameraStatus.textContent =
+            'Camera access is unavailable. Use HTTPS or localhost.';
+        return;
+    }
+
+    try {
+        cameraStatus.textContent = 'Requesting camera permission...';
+
+        cameraStream = await navigator.mediaDevices.getUserMedia({
+            video: {
+                facingMode: 'user'
+            },
+            audio: false
+        });
+
+        video.srcObject = cameraStream;
+        video.style.display = 'block';
+        placeholder.style.display = 'none';
+
+        startButton.disabled = true;
+        startButton.style.opacity = '.5';
+
+        scanButton.disabled = false;
+        scanButton.style.opacity = '1';
+
+        cameraStatus.textContent = 'Camera active. You can now scan.';
+
+    } catch (error) {
+        cameraStatus.textContent =
+            'Unable to access camera. Please allow camera permission and try again.';
+    }
+});
+
+// SCAN FACE - SIMULATED RESULT
+scanButton.addEventListener('click', function () {
+    if (!cameraStream) return;
+
+    scanButton.disabled = true;
+    result.style.display = 'none';
+    overlay.style.display = 'block';
+    cameraStatus.textContent = 'Scanning demonstration...';
+
+    setTimeout(function () {
+        overlay.style.display = 'none';
+        result.style.display = 'block';
+        cameraStatus.textContent =
+            'Demo scan complete. This is a simulated match, not actual identification.';
+
+        scanButton.disabled = false;
+    }, 1800);
+});
+
+// STOP CAMERA
+stopButton.addEventListener('click', function () {
+    if (cameraStream) {
+        cameraStream.getTracks().forEach(track => track.stop());
+        cameraStream = null;
+    }
+
+    video.srcObject = null;
+    video.style.display = 'none';
+    placeholder.style.display = 'flex';
+
+    startButton.disabled = false;
+    startButton.style.opacity = '1';
+
+    scanButton.disabled = true;
+    scanButton.style.opacity = '.5';
+
+    overlay.style.display = 'none';
+    result.style.display = 'none';
+
+    cameraStatus.textContent = 'Camera stopped.';
+});
+
+// ATTENDANCE TRENDS CHART
+new Chart(document.getElementById('trendChart'), {
+    type: 'line',
+    data: {
+        labels: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'],
+        datasets: [{
+            label: 'Attendance',
+            data: [82, 88, 85, 91, 87, 90],
+            borderColor: '#315fbd',
+            backgroundColor: 'rgba(49,95,189,0.10)',
+            fill: true,
+            tension: 0.4,
+            pointRadius: 4
+        }]
+    },
+    options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+            legend: { display: false }
+        },
+        scales: {
+            y: {
+                beginAtZero: true,
+                max: 100,
+                ticks: {
+                    callback: value => value + '%'
+                }
+            }
+        }
+    }
+});
+
+// ATTENDANCE DISTRIBUTION CHART
+new Chart(document.getElementById('attendanceChart'), {
+    type: 'doughnut',
+    data: {
+        labels: ['Present', 'Absent'],
+        datasets: [{
+            data: [218, 32],
+            backgroundColor: ['#219b68', '#e65a5a'],
+            borderWidth: 0,
+            hoverOffset: 5
+        }]
+    },
+    options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        cutout: '72%',
+        plugins: {
+            legend: {
+                position: 'bottom',
+                labels: {
+                    usePointStyle: true,
+                    padding: 20
+                }
+            }
+        }
+    }
+});
+
+// RELEASE CAMERA WHEN VISITOR LEAVES
+window.addEventListener('pagehide', function () {
+    if (cameraStream) {
+        cameraStream.getTracks().forEach(track => track.stop());
+    }
+});
+
+</script>
+<script>
+    const MODEL_URL = 'https://cdn.jsdelivr.net/gh/justadudewhohacks/face-api.js@0.22.2/weights';
+
+    let faceDetectionModelReady = false;
+
+    async function loadFaceDetectionModel() {
+        try {
+            console.log("Loading face detection model...");
+
+            await faceapi.nets.tinyFaceDetector.loadFromUri(MODEL_URL);
+
+            faceDetectionModelReady = true;
+
+            console.log("Face detection model loaded successfully!");
+        } catch (error) {
+            console.error("Model loading failed:", error);
+        }
+    }
+
+    window.addEventListener('load', loadFaceDetectionModel);
+</script>
+</body>
+</html>

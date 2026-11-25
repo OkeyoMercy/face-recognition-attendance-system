@@ -111,8 +111,8 @@ def process_scan(request):
             img = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
 
             # Resize for faster processing
-            small = cv2.resize(img, (0, 0), fx=0.5, fy=0.5)
-            rgb_frame = small[:, :, ::-1]
+                # Process image at original camera resolution
+            rgb_frame = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
 
             face_locations = face_recognition.face_locations(rgb_frame, model='hog')
             if not face_locations:
@@ -148,7 +148,14 @@ def process_scan(request):
 
             return JsonResponse({"status": "success", "message": " | ".join(results)})
         except Exception as e:
-            return JsonResponse({"status": "error", "message": "Processing error. Please try again."})
+            import traceback
+            print("FACE SCAN ERROR:", repr(e))
+            traceback.print_exc()
+
+            return JsonResponse({
+                "status": "error",
+                "message": "Processing error. Please check the server terminal."
+            })
     return JsonResponse({"status": "error", "message": "Invalid method"})
 
 @login_required(login_url='login')
@@ -272,3 +279,9 @@ def register_student(request):
             messages.error(request, "Registration failed. Please check the photo and try again.")
 
     return render(request, 'attendance_app/register_student.html')
+def welcome(request):
+    return render(request, 'welcome.html')
+def demo(request):
+    return render(request, 'attendance_app/demo.html')
+def demo(request):
+    return render(request, 'attendance_app/demo.html')

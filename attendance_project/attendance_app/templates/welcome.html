@@ -1,0 +1,253 @@
+
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Attendance System</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: #f5f8fc;
+            color: #172b4d;
+        }
+
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 22px 8%;
+            background: white;
+        }
+
+        .logo {
+            font-size: 22px;
+            font-weight: bold;
+            color: #123b70;
+        }
+
+        .logo span {
+            color: #d93636;
+        }
+
+        .nav-login {
+            text-decoration: none;
+            color: #123b70;
+            font-weight: bold;
+        }
+
+        .hero {
+            min-height: 75vh;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 40px;
+            padding: 70px 8%;
+        }
+
+        .hero-content {
+            max-width: 580px;
+        }
+
+        .tag {
+            display: inline-block;
+            background: #e7effa;
+            color: #174b86;
+            padding: 9px 16px;
+            border-radius: 30px;
+            font-size: 13px;
+            margin-bottom: 25px;
+        }
+
+        h1 {
+            font-size: clamp(38px, 5vw, 58px);
+            line-height: 1.15;
+            margin-bottom: 22px;
+            color: #123b70;
+        }
+
+        h1 span {
+            color: #d93636;
+        }
+
+        .description {
+            font-size: 17px;
+            line-height: 1.8;
+            color: #64748b;
+            margin-bottom: 32px;
+        }
+
+        .buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .btn {
+            padding: 15px 25px;
+            border-radius: 7px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: 0.3s;
+        }
+
+        .primary {
+            background: #123b70;
+            color: white;
+        }
+
+        .primary:hover {
+            background: #0b2a50;
+        }
+
+        .secondary {
+            border: 2px solid #123b70;
+            color: #123b70;
+        }
+
+        .secondary:hover {
+            background: #e7effa;
+        }
+
+        .visual {
+            background: white;
+            width: 390px;
+            max-width: 100%;
+            padding: 35px;
+            border-radius: 18px;
+            box-shadow: 0 15px 45px rgba(18, 59, 112, 0.10);
+        }
+
+        .visual h2 {
+            color: #123b70;
+            margin-bottom: 25px;
+        }
+
+        .feature {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin: 22px 0;
+        }
+
+        .feature-icon {
+            width: 45px;
+            height: 45px;
+            border-radius: 10px;
+            background: #e7effa;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 21px;
+        }
+
+        .feature h3 {
+            font-size: 15px;
+            margin-bottom: 5px;
+        }
+
+        .feature p {
+            font-size: 13px;
+            color: #64748b;
+        }
+
+        footer {
+            text-align: center;
+            padding: 25px;
+            color: #64748b;
+            font-size: 13px;
+        }
+
+        @media (max-width: 800px) {
+            .hero {
+                flex-direction: column;
+                align-items: flex-start;
+                padding-top: 50px;
+            }
+
+            .visual {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <nav>
+        <div class="logo">SMART<span>ATTENDANCE</span></div>
+        <a href="{% url 'login' %}" class="nav-login">Staff Login</a>
+    </nav>
+
+    <section class="hero">
+
+        <div class="hero-content">
+            <div class="tag">SMARTER ATTENDANCE MANAGEMENT</div>
+
+            <h1>
+                Attendance Made
+                <span>Smarter.</span>
+            </h1>
+
+            <p class="description">
+                A modern attendance management system designed for
+                educational institutions. Using face recognition technology,
+                the system simplifies attendance tracking, improves accuracy
+                and makes attendance reporting easier.
+            </p>
+
+            <div class="buttons">
+                <a href="{% url 'demo' %}" class="btn primary">
+                    Explore Demo
+                </a>
+
+                <a href="{% url 'login' %}" class="btn secondary">
+                    Staff Login
+                </a>
+            </div>
+        </div>
+
+        <div class="visual">
+            <h2>System Features</h2>
+
+            <div class="feature">
+                <div class="feature-icon">📷</div>
+                <div>
+                    <h3>Face Recognition</h3>
+                    <p>Automated student identification.</p>
+                </div>
+            </div>
+
+            <div class="feature">
+                <div class="feature-icon">📊</div>
+                <div>
+                    <h3>Attendance Reports</h3>
+                    <p>Clear attendance statistics and records.</p>
+                </div>
+            </div>
+
+            <div class="feature">
+                <div class="feature-icon">🎓</div>
+                <div>
+                    <h3>Student Management</h3>
+                    <p>Organized student attendance information.</p>
+                </div>
+            </div>
+        </div>
+
+    </section>
+
+    <footer>
+        Smart Attendance System | Educational Attendance Management
+    </footer>
+
+</body>
+</html>
